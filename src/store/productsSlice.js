@@ -3,7 +3,12 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const API_BASE = "https://dummyjson.com";
 
 function mapProduct(p) {
-  const hasDiscount = p.discountPercentage != null && p.discountPercentage > 0;
+  const roundedDiscount =
+    p.discountPercentage != null ? Math.round(p.discountPercentage) : 0;
+  const hasDiscount =
+    p.discountPercentage != null &&
+    p.discountPercentage > 0 &&
+    roundedDiscount > 0;
   return {
     id: p.id,
     name: p.title,
@@ -11,7 +16,7 @@ function mapProduct(p) {
     originalPrice: hasDiscount
       ? Math.round((p.price / (1 - p.discountPercentage / 100)) * 100) / 100
       : undefined,
-    discount: hasDiscount ? Math.round(p.discountPercentage) : undefined,
+    discount: hasDiscount ? roundedDiscount : undefined,
     category: p.category || "other",
     rating: p.rating ?? 0,
     image: p.thumbnail || p.images?.[0] || "",
